@@ -26,24 +26,25 @@
 
 	let timer;
 
-	let timeInit;
+	let clicked = new Date();
+	let appeared = new Date();
 
-	let appearances = [];
+	let difference = appeared - clicked;
 
-	let clicks = [];
+	const roundToHundreths = (n) => Math.round(n * 100) / 100;
+
+	$: differenceSeconds = roundToHundreths(difference / 1000);
 
 	const startTimer = (interval) => {
 		timer = setTimeout(() => {
 			spongeBobVisible = true;
-			appearances.push(new Date());
+			appeared = new Date();
 		}, interval);
 	};
 
 	const handleClick = () => {
-		clicks.push(new Date());
-		const diff =
-			clicks[clicks.length - 1] - appearances[appearances.length - 1];
-		console.log("Time between appearance and click was " + diff);
+		clicked = new Date();
+		difference = clicked - appeared;
 		clearTimeout(timer);
 		spongeBobVisible = false;
 		randomPosition = getRandomPosition();
@@ -61,7 +62,6 @@
 		)();
 		randomPosition = getRandomPosition();
 		startTimer(startingInterval);
-		timeInit = new Date();
 	});
 </script>
 
@@ -70,6 +70,7 @@
 		align-items: center;
 		background-color: darkgray;
 		display: flex;
+		flex-direction: column;
 		position: relative;
 		justify-content: center;
 		width: 100%;
@@ -83,19 +84,21 @@
 	}
 
 	button {
-		align-self: center;
 		border: none;
 		background-color: lightblue;
 		box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19),
 			0 6px 6px rgba(0, 0, 0, 0.23);
-		justify-self: center;
 		font-size: 16px;
 		line-height: 20px;
+		margin-bottom: 20px;
 		width: 200px;
 	}
 
 	.visible {
 		display: block;
+	}
+
+	.info {
 	}
 </style>
 
@@ -112,6 +115,11 @@
 	<button on:click={handleClick}>
 		Click this button when you see Spongebob.
 	</button>
+	<div class="info">
+		The time between click and appearance is
+		{differenceSeconds}
+		seconds.
+	</div>
 </div>
 
 <!-- 
